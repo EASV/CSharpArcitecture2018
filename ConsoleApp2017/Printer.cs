@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using CustomerApp.Core.ApplicationService;
 using CustomerApp.Core.DomainService;
 using CustomerApp.Core.Entity;
 using CustomerApp.Infrastructure.Static.Data.Repositories;
@@ -28,14 +29,14 @@ namespace ConsoleApp2017
 
     public class Printer
     {
-        #region Repository area
+        #region Service area
 
-        private ICustomerRepository customerRepository;
+        readonly ICustomerService _customerService;
         #endregion
 
-        public Printer()
+        public Printer(ICustomerService customerService)
         {
-            customerRepository = new CustomerRepository();
+            _customerService = customerService;
             //Move to Infrastructure Layer later 
             InitData();
             //Main UI start
@@ -62,28 +63,34 @@ namespace ConsoleApp2017
                 switch (selection)
                 {
                     case 1:
-                        var customers = GetAllCustomers();
+                        var customers = _customerService.GetAllCustomers();
                         ListCustomers(customers);
                         break;
                     case 2:
                         var firstName = AskQuestion("Firstname: ");
                         var lastName = AskQuestion("Lastname: ");
                         var address = AskQuestion("Address: ");
-                        var customer = CreateCustomer(firstName, lastName, address);
-                        SaveCustomer(customer);
+                        var customer = _customerService.NewCustomer(firstName, lastName, address);
+                        _customerService.CreateCustomer(customer);
                         break;
                     case 3:
                         var idForDelete = PrintFindCustomeryId();
-                        DeleteCustomer(idForDelete);
+                        _customerService.DeleteCustomer(idForDelete);
                         break;
                     case 4:
                         var idForEdit = PrintFindCustomeryId();
-                        var customerToEdit = FindCustomerById(idForEdit);
+                        var customerToEdit = _customerService.FindCustomerById(idForEdit);
                         Console.WriteLine("Updating " + customerToEdit.FirstName + " " + customerToEdit.LastName);
                         var newFirstName = AskQuestion("Firstname: ");
                         var newLastName = AskQuestion("Lastname: ");
                         var newAddress = AskQuestion("Address: ");
-                        UpdateCustomer(idForEdit, newFirstName, newLastName, newAddress);
+                        _customerService.UpdateCustomer(new Customer()
+                        {
+                            Id = idForEdit,
+                            FirstName = newFirstName,
+                            LastName = newLastName,
+                            Address = newAddress
+                        });
                         break;
                     default:
                         break;
@@ -154,59 +161,6 @@ namespace ConsoleApp2017
         }
         #endregion
 
-        #region Please move to Application Service
-
-        void UpdateCustomer(int id, string newFirstName, string newLastName, string newAddress)
-        {
-            var customer = FindCustomerById(id);
-            customer.FirstName = newFirstName;
-            customer.LastName = newLastName;
-            customer.Address = newAddress;
-
-            //Save with repository!!
-        }
-
-        Customer FindCustomerById(int id)
-        {
-            return customerRepository.ReadyById(id);
-        }
-
-        List<Customer> GetAllCustomers()
-        {
-            return customerRepository.ReadAll();
-        }
-
-        void DeleteCustomer(int id)
-        {
-            customerRepository.Delete(id);
-        }
-
-        //Application Service
-        Customer CreateCustomer(string firstName,
-                         string lastName,
-                         string address)
-        {
-            //Create - Application
-            var cust = new Customer()
-            {
-                FirstName = firstName,
-                LastName = lastName,
-                Address = address
-            };
-
-            return cust;
-
-        }
-
-        //Application Service
-        Customer SaveCustomer(Customer cust)
-        {
-            //Save in Data - Application
-            return customerRepository.Create(cust);
-        }
-
-        #endregion
-
         #region Infrastructure layer / Initialization Layer
 
         void InitData()
@@ -217,7 +171,7 @@ namespace ConsoleApp2017
                 LastName = "Dylan",
                 Address = "BongoStreet 202"
             };
-            customerRepository.Create(cust1);
+            _customerService.CreateCustomer(cust1);
 
             var cust2 = new Customer()
             {
@@ -225,7 +179,7 @@ namespace ConsoleApp2017
                 LastName = "Bilde",
                 Address = "Ostestrasse 202"
             };
-            customerRepository.Create(cust2);
+            _customerService.CreateCustomer(cust2);
         }
 
         #endregion

@@ -42,6 +42,15 @@ namespace CustomerApp.Core.ApplicationService.Services
             return _customerRepo.ReadAll().ToList();
         }
 
+        public List<Customer> GetAllByFirstName(string name)
+        {
+            var list = _customerRepo.ReadAll();
+            var queryContinued = list.Where(cust => cust.FirstName.Equals(name));
+            queryContinued.OrderBy(customer => customer.FirstName);
+            //Not executed anything yet
+            return queryContinued.ToList();
+        }
+
         public Customer UpdateCustomer(Customer customerUpdate)
         {
             var customer = FindCustomerById(customerUpdate.Id);

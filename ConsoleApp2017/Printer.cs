@@ -27,7 +27,7 @@ namespace ConsoleApp2017
     */
     #endregion
 
-    public class Printer
+    public class Printer: IPrinter
     {
         #region Service area
 
@@ -39,14 +39,12 @@ namespace ConsoleApp2017
             _customerService = customerService;
             //Move to Infrastructure Layer later 
             InitData();
-            //Main UI start
-            StartUI();
 
         }
 
         #region UI
 
-        void StartUI()
+        public void StartUI()
         {
             string[] menuItems = {
                 "List All Customers",

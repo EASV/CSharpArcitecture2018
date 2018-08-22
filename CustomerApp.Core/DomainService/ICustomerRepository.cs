@@ -12,7 +12,7 @@ namespace CustomerApp.Core.DomainService
         Customer Create(Customer customer);
         //Read Data
         Customer ReadyById(int id);
-        List<Customer> ReadAll();
+        IEnumerable<Customer> ReadAll();
         //Update Data
         Customer Update(Customer customerUpdate);
         //Delete Data

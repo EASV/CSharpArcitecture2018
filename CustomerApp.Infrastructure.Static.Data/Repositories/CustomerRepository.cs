@@ -16,7 +16,7 @@ namespace CustomerApp.Infrastructure.Static.Data.Repositories
             return customer;
         }
 
-        public List<Customer> ReadAll()
+        public IEnumerable<Customer> ReadAll()
         {
             return _customers;
         }

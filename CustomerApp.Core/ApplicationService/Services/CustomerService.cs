@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using CustomerApp.Core.DomainService;
 using CustomerApp.Core.Entity;
 
@@ -38,7 +39,7 @@ namespace CustomerApp.Core.ApplicationService.Services
 
         public List<Customer> GetAllCustomers()
         {
-            throw new NotImplementedException();
+            return _customerRepo.ReadAll().ToList();
         }
 
         public Customer UpdateCustomer(Customer customerUpdate)
